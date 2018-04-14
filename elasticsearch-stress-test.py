@@ -172,7 +172,7 @@ def generate_random_int(max_size):
 
 # Generate a random string with length of 1 to provided param
 def generate_random_string(max_size):
-    return ''.join(choice(string.ascii_lowercase) for _ in range(generate_random_int(max_size)))
+    return ''.join(choice(string.ascii_lowercase) for _ in range(max_size))
 
 
 # Create a document template
@@ -180,7 +180,7 @@ def generate_document():
     temp_doc = {}
 
     # Iterate over the max fields
-    for _ in range(generate_random_int(MAX_FIELDS_PER_DOCUMENT)):
+    for _ in range(MAX_FIELDS_PER_DOCUMENT):
         # Generate a field, with random content
         temp_doc[generate_random_string(10)] = generate_random_string(MAX_SIZE_PER_FIELD)
 
@@ -342,7 +342,7 @@ def print_stats_worker(STARTED_TIMESTAMP):
 def main():
     clients = []
     all_indices = []
-    auth = None 
+    auth = None
     context = None
 
     # Set the timestamp
@@ -359,7 +359,7 @@ def main():
 
             if CA_FILE:
                 context = create_ssl_context(cafile=CA_FILE)
-         
+
             if AUTH_USERNAME and AUTH_PASSWORD:
                 auth = (AUTH_USERNAME, AUTH_PASSWORD)
 
@@ -422,7 +422,7 @@ def main():
                 print("")
                 print("Ctrl-c received! Sending kill to threads...")
                 shutdown_event.set()
-                
+
                 # set loop flag true to get into loop
                 flag = True
                 while flag:
@@ -435,7 +435,7 @@ def main():
                         # if one single thread is still alive repeat the loop
                         if t.isAlive():
                             flag = True
-                            
+
                 print("Cleaning up created indices.. "),
                 cleanup_indices(es, all_indices)
 

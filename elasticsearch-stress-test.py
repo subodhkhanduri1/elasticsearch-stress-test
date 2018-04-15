@@ -52,6 +52,7 @@ parser.add_argument("--clients", type=int, help="The number of clients to write 
 parser.add_argument("--seconds", type=int, help="The number of seconds to run for each ip", required=True)
 parser.add_argument("--number-of-shards", type=int, default=3, help="Number of shards per index (default 3)")
 parser.add_argument("--number-of-replicas", type=int, default=1, help="Number of replicas per index (default 1)")
+parser.add_argument("--refresh-interval", default="1s", help="Frequency of index refresh (default 1s)")
 parser.add_argument("--bulk-size", type=int, default=1000, help="Number of document per request (default 1000)")
 parser.add_argument("--max-fields-per-document", type=int, default=100,
                     help="Max number of fields in each document (default 100)")
@@ -78,6 +79,7 @@ NUMBER_OF_CLIENTS = args.clients
 NUMBER_OF_SECONDS = args.seconds
 NUMBER_OF_SHARDS = args.number_of_shards
 NUMBER_OF_REPLICAS = args.number_of_replicas
+REFRESH_INTERVAL = args.refresh_interval
 BULK_SIZE = args.bulk_size
 MAX_FIELDS_PER_DOCUMENT = args.max_fields_per_document
 MAX_SIZE_PER_FIELD = args.max_size_per_field
@@ -277,7 +279,8 @@ def generate_indices(es):
         try:
             # And create it in ES with the shard count and replicas
             es.indices.create(index=temp_index, body={"settings": {"number_of_shards": NUMBER_OF_SHARDS,
-                                                                   "number_of_replicas": NUMBER_OF_REPLICAS}})
+                                                                   "number_of_replicas": NUMBER_OF_REPLICAS,
+                                                                   "refresh_interval": REFRESH_INTERVAL}})
 
         except Exception as e:
             print("Could not create index. Is your cluster ok?")

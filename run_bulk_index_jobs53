@@ -1,0 +1,33 @@
+#!/bin/bash
+
+echo "Batches - ${1}"
+echo "Jobs per batch - ${2}"
+
+failed=0
+
+for batch_no in $(seq 1 $1)
+do
+
+  echo "Starting batch ${batch_no}"
+
+  for process_number in $(seq 1 $2)
+  do
+    python elasticsearch-stress-test.py --es_address $3 --documents 1 --bulk-size 1000 --max-fields-per-document 100 --max-size-per-field 1000 --indices 1 --number-of-shards 5 --number-of-replicas 1 --refresh-interval "30s" --clients 10 --seconds 1500 --no-cleanup --no-verify > ${batch_no}_${process_number}.log &
+  done
+
+  echo "Processes started in background"
+
+  echo "Waiting for batch #{batch_no} jobs to complete"
+
+  jobs -p
+
+  for job_pid in $(jobs -p)
+  do
+    wait $job_pid || let "failed+=1"
+  done
+
+  echo "Batch ${batch_no} done"
+
+done
+
+echo "Total Failed - ${failed}"
